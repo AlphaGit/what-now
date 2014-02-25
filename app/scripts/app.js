@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('whatNowApp', ['ngRoute', 'd3', 'whatNowApp.directives'])
+angular.module('whatNowApp', ['ngRoute'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {

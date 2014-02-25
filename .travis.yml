@@ -1,8 +1,20 @@
 language: node_js
 node_js:
-  - '0.10'
-before_script:
-  - 'npm install -g bower grunt-cli'
-  - 'bower install'
-  - 'gem install sass'
-  - 'gem install compass'
+- '0.10'
+install:
+- npm install --no-optional --loglevel warn
+- npm install -g bower grunt-cli --no-optional --loglevel warn
+- bower install --quiet
+before_deploy:
+- gem install sass compass --no-document --no-verbose
+- grunt build
+- yes | ruby prepare_git.rb
+- git add -f dist
+- git commit -q -m "Deployment"
+deploy:
+  provider: heroku
+  api_key:
+    secure: ftQ96lTxNNdVnoxXUYzhD6zx9I47iSbyOpTf+xq///qTCf8Cflf6cQ+xnSrrhZNp2pR1scGY1a972BAWbNa18/M8d6+8aiozO26xgL9x230ALDz9U2OXXfkOHRWuYc6T26HWs5YUO71l00+eoppJGAPbYyZ5hqR5/67u47FelXU=
+  app: what-now
+  on: master
+  strategy: anvil

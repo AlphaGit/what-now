@@ -1,4 +1,4 @@
-angular.module('whatNowApp.directives', ['d3'])
+angular.module('whatNowApp')
   .directive('d3Pert', ['$window', 'd3Service', 'dependencyResolutionService',
   function ($window, d3Service, dependencyResolutionService) {
     'use strict';
