@@ -1,32 +1,67 @@
 angular.module('whatNowApp')
-  .directive('d3Pert', ['$window', 'd3Service', 'dependencyResolutionService',
-  function ($window, d3Service, dependencyResolutionService) {
+  .directive('d3Pert', ['$window', 'd3Service', 'sugiyamaService',
+  function ($window, d3Service, sugiyamaService) {
     'use strict';
 
     var svg;
     var taskPositions;
 
-    function recalculateTasksPositions (taskLayers) {
+    function recalculateTasksPositions (taskList) {
+      var nodeHash = {};
+
+      // created nodes
+      var nodes = taskList.map(function (task) {
+        var node = sugiyamaService.createNode(task);
+        nodeHash[task.id] = node;
+        return node;
+      });
+
+      // connect nodes
+      nodes.forEach(function (node) {
+        node.data.dependsOn.forEach(function (taskDependedUpon) {
+          sugiyamaService.connectNodes(nodeHash[taskDependedUpon.id], node);
+        });
+      });
+
+      var columns = sugiyamaService.getDrawingStructure(nodes);
+
       taskPositions = {};
       var x = 0;
       var y = 0;
 
-      angular.forEach(taskLayers, function (layer) {
+      angular.forEach(columns, function (row) {
         x += 50;
 
-        angular.forEach(layer, function (task) {
+        angular.forEach(row, function (node) {
           y += 50;
 
-          taskPositions[task.id] = { x: x, y: y };
+          taskPositions[node.data.id] = { x: x, y: y };
         });
 
         y = 0;
       });
     }
 
-    function drawLayer (layer) {
+    function drawDependencies (taskList) {
+      angular.forEach(taskList, function (dependentTask) {
+        angular.forEach(dependentTask.dependsOn, function (taskDependedUpon) {
+          var arrowOrigin = taskPositions[taskDependedUpon.id];
+          var arrowDestiny = taskPositions[dependentTask.id];
+
+          svg.append('line')
+            .attr('x1', arrowOrigin.x)
+            .attr('y1', arrowOrigin.y)
+            .attr('x2', arrowDestiny.x)
+            .attr('y2', arrowDestiny.y)
+            .attr('stroke-width', 2)
+            .attr('stroke', 'black');
+        });
+      });
+    }
+
+    function drawTasks (taskList) {
       var groups = svg.selectAll('g')
-        .data(layer, function (d) { return d.id; })
+        .data(taskList, function (d) { return d.id; })
         .enter()
         .append('g')
         .attr('transform', function(d) {
@@ -64,14 +99,13 @@ angular.module('whatNowApp')
     }
 
     function redraw (taskList) {
-      var layeredTasks = dependencyResolutionService.arrangeInLayers(taskList);
-      recalculateTasksPositions(layeredTasks);
+      recalculateTasksPositions(taskList);
 
       svg.selectAll('*').remove();
 
-      angular.forEach(layeredTasks, function (layer) {
-        drawLayer(layer);
-      });
+
+      drawTasks(taskList);
+      drawDependencies(taskList);
     }
 
     return {
