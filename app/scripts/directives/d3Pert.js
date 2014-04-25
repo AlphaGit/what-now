@@ -95,7 +95,7 @@ angular.module('whatNowApp')
       svg.attr('height', 500)
          .attr('width', '100%');
 
-      $scope.$watchCollection('taskList', redraw);
+      $scope.$watch('taskList', redraw, true);
     }
 
     function redraw (taskList) {

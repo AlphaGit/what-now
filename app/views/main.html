@@ -13,22 +13,25 @@
       <td>{{task.id}}</td>
       <td>{{task.name}}</td>
       <td>{{task.dependsOnText}}</td>
-      <td><a title="Remove" ng-click="removeTask(task)">[Remove]</a></td>
+      <td>
+        <a title="Edit" ng-click="editTask(task)">[Edit]</a>
+        <a title="Remove" ng-click="removeTask(task)">[Remove]</a>
+      </td>
     </tr>
   </tbody>
 </table>
 
 <p ng-hide="tasks.length">Nothing over here yet. Why don't you try adding some tasks?</p>
 
-<form ng-submit="addTaskFromForm(newTask)">
+<form ng-submit="submitForm(newTask)">
   <label for="newTaskName">Name:</label>
-  <input type="text" name="newTaskName" ng-model="newTask.name" placeholder="Your task here" required />
+  <input type="text" name="newTaskName" ng-model="taskBeingEdited.name" placeholder="Your task here" required />
   <br />
 
   <label for="newTaskDependsOnText">Depends on:</label>
-  <input type="text" name="newTaskDependsOnText" ng-model="newTask.dependsOnText" placeholder="IDs your task depends on" />
+  <input type="text" name="newTaskDependsOnText" ng-model="taskBeingEdited.dependsOnText" placeholder="IDs your task depends on" />
   <br />
-  <button>Add Task</button>
+  <button>{{editingExistingTask ? 'Edit Task' : 'Add Task'}}</button>
 </form>
 
 <d3-pert task-list="tasks"></d3-pert>
