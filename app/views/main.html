@@ -1,7 +1,5 @@
-
-
 <h1>Our task list</h1>
-<table style="width: 100%" ng-show="tasks.length">
+<table style="width: 100%" ng-show="tasks.length" class="task-list">
   <thead>
     <th>ID</th>
     <th>Name</th>
@@ -9,7 +7,7 @@
     <th>Actions</th>
   </thead>
   <tbody>
-    <tr ng-repeat="task in tasks">
+    <tr ng-repeat="task in tasks" ng-class="{'selected-task':task.isSelected, task: true}" ng-click="selectTask(task)">
       <td>{{task.id}}</td>
       <td>{{task.name}}</td>
       <td>{{task.dependsOnText}}</td>
@@ -34,4 +32,4 @@
   <button>{{editingExistingTask ? 'Edit Task' : 'Add Task'}}</button>
 </form>
 
-<d3-pert task-list="tasks"></d3-pert>
+<d3-pert task-list="tasks" on-task-clicked="selectTask"></d3-pert>

@@ -208,5 +208,34 @@ describe('Controller: MainCtrl', function () {
         expect(scope.taskBeingEdited).toBeDefined(task);
       });
     });
+
+    describe('#selectTask', function() {
+      it('should be defined', function() {
+        expect(scope.selectTask).toBeDefined();
+      });
+
+      it('should set the isSelected property on the task', function() {
+        var task = ctrl.generateNewTask();
+
+        scope.tasks.push(task);
+        
+        scope.selectTask(task);
+
+        expect(task.isSelected).toBe(true);
+      });
+
+      it('should remove the isSelected property on other tasks', function() {
+        var task1 = ctrl.generateNewTask();
+        var task2 = ctrl.generateNewTask();
+        task2.isSelected = true;
+
+        scope.tasks.push(task1);
+        scope.tasks.push(task2);
+
+        scope.selectTask(task1);
+
+        expect(task2.isSelected).toBe(false);
+      });
+    });
   });
 });

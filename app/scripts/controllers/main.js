@@ -105,5 +105,11 @@ angular.module('whatNowApp')
         $scope.editingExistingTask = true;
         $scope.taskBeingEdited = taskToEdit;
       };
+
+      $scope.selectTask = function(taskToSelect) {
+        $scope.tasks.forEach(function(task) {
+          task.isSelected = task == taskToSelect;
+        });
+      };
     }
   ]);

@@ -5,6 +5,7 @@ angular.module('whatNowApp')
 
     var svg;
     var taskPositions;
+    var scope;
 
     function recalculateTasksPositions (taskList) {
       var nodeHash = {};
@@ -75,7 +76,17 @@ angular.module('whatNowApp')
         .attr({
           cx: 0,
           cy: 0,
-          r: 5
+          r: 5,
+          stroke: 'black',
+          'stroke-width': function (d) { return d.isSelected ? 1 : 0; }
+        })
+        .style('fill', function(d) {
+          return d.isSelected ? 'yellow' : 'black';
+        })
+        .on('click', function(task) {
+          scope.$apply(function() {
+            scope.onTaskClicked(task);
+          });
         });
 
       /*var labels = */
@@ -90,6 +101,7 @@ angular.module('whatNowApp')
     }
 
     function link ($scope, element) {
+      scope = $scope;
       svg = d3Service.select(element[0]).append('svg');
 
       svg.attr('height', 500)
@@ -103,7 +115,6 @@ angular.module('whatNowApp')
 
       svg.selectAll('*').remove();
 
-
       drawTasks(taskList);
       drawDependencies(taskList);
     }
@@ -111,7 +122,8 @@ angular.module('whatNowApp')
     return {
       restrict: 'EA',
       scope: {
-        taskList: '='
+        taskList: '=',
+        onTaskClicked: '='
       },
       link: link
     };

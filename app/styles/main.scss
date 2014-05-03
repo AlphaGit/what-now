@@ -1,0 +1,7 @@
+.task-list {
+  .task {
+    &.selected-task {
+      background-color: yellow;
+    }
+  }
+}
