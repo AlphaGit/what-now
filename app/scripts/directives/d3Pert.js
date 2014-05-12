@@ -1,6 +1,6 @@
 angular.module('whatNowApp')
-  .directive('d3Pert', ['$window', 'd3Service', 'sugiyamaService',
-  function ($window, d3Service, sugiyamaService) {
+  .directive('d3Pert', ['$window', 'd3Service', 'sugiyamaService', 'textSizingService',
+  function ($window, d3Service, sugiyamaService, textSizingService) {
     'use strict';
 
     var svg;
@@ -31,10 +31,10 @@ angular.module('whatNowApp')
       var y = 0;
 
       angular.forEach(columns, function (row) {
-        x += 50;
+        x += 100;
 
         angular.forEach(row, function (node) {
-          y += 50;
+          y += 90;
 
           taskPositions[node.data.id] = { x: x, y: y };
         });
@@ -91,7 +91,20 @@ angular.module('whatNowApp')
 
       /*var labels = */
       groups.append('text')
-        .text(function(d) { return d.name; })
+        .each(function(d) {
+          var el = d3Service.select(this);
+          var chunks = textSizingService.breakInChunks(d.name, 100);
+          var y = 20;
+          chunks.forEach(function (chunk) {
+            el.append('tspan')
+              .text(chunk)
+              .attr({
+                y: y,
+                x: 0
+              });
+            y += 14;
+          });
+        })
         .attr({
           fill: 'black',
           'alignment-baseline': 'middle',
