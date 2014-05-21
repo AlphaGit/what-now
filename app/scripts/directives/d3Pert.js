@@ -117,7 +117,7 @@ angular.module('whatNowApp')
       scope = $scope;
       svg = d3Service.select(element[0]).append('svg');
 
-      svg.attr('height', 500)
+      svg.attr('height', 300)
          .attr('width', '100%');
 
       $scope.$watch('taskList', redraw, true);

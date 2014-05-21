@@ -13,8 +13,4 @@ angular.module('whatNowApp', ['ngRoute'])
       .otherwise({
         redirectTo: '/'
       });
-  }).run(function ($rootScope, $location) {
-    $rootScope.isActiveRoute = function (path) {
-      return $location.path() == path;
-    };
   });

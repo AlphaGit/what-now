@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('whatNowApp')
-  .factory('textSizingService', ['jQuery', function ($) {
+  .factory('textSizingService', ['jQueryService', function ($) {
 
     /******************* private members *************************/
     var $hiddenText = $('<span style="display: none"></span>');
@@ -33,7 +33,7 @@ angular.module('whatNowApp')
     service.breakInChunks = function(text, maxWidth) {
       var chunks = [];
 
-      var words = text.split(/\s+/);
+      var words = (text || '').split(/\s+/);
       if (words.length === 1) {
         return words;
       }

@@ -1,7 +1,6 @@
-.task-list {
-  .task {
-    &.selected-task {
-      background-color: yellow;
-    }
-  }
+.app-title,
+.app-subtitle {
+  display: inline-block;
+  margin-top: 0;
+  margin-bottom: 0;
 }

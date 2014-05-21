@@ -6,7 +6,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title></title>
+  <title>what now? | To do list with a twist.</title>
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width">
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
@@ -25,26 +25,19 @@
       <script src="bower_components/json3/lib/json3.min.js"></script>
     <![endif]-->
 
-    <div class="container">
-      <div class="header">
-        <ul class="nav nav-pills pull-right">
-          <li ng-class="{ active: isActiveRoute('/') }"><a ng-href="#/">Home</a></li>
-          <li ng-class="{ active: isActiveRoute('/about') }"><a ng-href="#/about">About</a></li>
-          <li ng-class="{ active: isActiveRoute('/contact') }"><a ng-href="#/contact">Contact</a></li>
-        </ul>
-        <h3 class="text-muted">what now</h3>
-      </div>
+    <div ng-view></div>
 
-      <!-- Add your site or application content here -->
-      <div ng-view></div>
+    <!-- Removed: used only during development.
+      TODO: Find a way to remove it from the build.
+      <div ng-controller="ExampleDataCtrl"></div>
+    -->
 
-      <div class="footer">
-        <p class="credits">
-          Created by <a href="http://www.alphasmanifesto.com/">Alpha</a>. &bull;
-          Reach me at Twitter: <a href="http://twitter.com/AlphaTwi">@AlphaTwi</a> &bull;
-          what-now is available at <a href="http://github.com/AlphaGit/what-now">GitHub</a>.
-        </p>
-      </div>
+    <div class="footer">
+      <p class="credits">
+        Created by <a href="http://www.alphasmanifesto.com/">Alpha</a>. &bull;
+        Reach me at Twitter: <a href="http://twitter.com/AlphaTwi">@AlphaTwi</a> &bull;
+        what-now is available at <a href="http://github.com/AlphaGit/what-now">GitHub</a>.
+      </p>
     </div>
 
     <script>
@@ -83,11 +76,20 @@
       <script src="scripts/app.js"></script>
 
       <script src="scripts/controllers/main.js"></script>
+      <script src="scripts/controllers/taskList.js"></script>
+      <script src="scripts/controllers/chart.js"></script>
+      <script src="scripts/controllers/details.js"></script>
 
-      <script src="scripts/services/sugiyama.js"></script>
+      <!-- Removed: used only during development.
+        TODO: Find a way to remove it from the build.
+        <script src="scripts/controllers/exampleData.js"></script>
+      -->
+      <script src="scripts/services/sugiyamaService.js"></script>
       <script src="scripts/services/d3Service.js"></script>
-      <script src="scripts/services/jQuery.js"></script>
+      <script src="scripts/services/jQueryService.js"></script>
       <script src="scripts/services/textSizingService.js"></script>
+      <script src="scripts/services/taskListService.js"></script>
+      <script src="scripts/services/taskDependencyService.js"></script>
 
       <script src="scripts/directives/d3Pert.js"></script>
     <!-- endbuild -->

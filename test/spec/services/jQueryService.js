@@ -11,11 +11,11 @@ describe('jQuery service', function() {
       $provide.value('$window', { jQuery: jQueryMock });
     });
 
-    var jQueryService;
-    inject(function(jQuery) {
-      jQueryService = jQuery;
+    var service;
+    inject(function(jQueryService) {
+      service = jQueryService;
     });
 
-    expect(jQueryService).toBe(jQueryMock);
+    expect(service).toBe(jQueryMock);
   });
 });

@@ -1,0 +1,67 @@
+body {
+  background-color: mintcream;
+}
+
+a {
+  color: #2A80CA;
+}
+
+.panel-default {
+  border-color: #CCCCCC;
+}
+
+  .panel-default > .panel-heading {
+    border-color: #CCCCCC;
+    background: #E4E3D1; /* Old browsers */
+    background: -moz-linear-gradient(top,  #e1e1cd 0%, #cbc68b 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#e1e1cd), color-stop(100%,#cbc68b)); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top,  #e1e1cd 0%,#cbc68b 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top,  #e1e1cd 0%,#cbc68b 100%); /* Opera 11.10+ */
+    background: -ms-linear-gradient(top,  #e1e1cd 0%,#cbc68b 100%); /* IE10+ */
+    background: linear-gradient(to bottom,  #e1e1cd 0%,#cbc68b 100%); /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#e1e1cd', endColorstr='#cbc68b',GradientType=0 ); /* IE6-9 */
+  }
+
+h2.panel-heading {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+[class*="col-"].panel {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+[class*="col-"].control-label {
+  padding-right: 0;
+}
+
+.btn-primary {
+  background-color: #94916F;
+  border-color: #918B7E;
+}
+
+.table-striped {
+  tbody {
+    tr:nth-child(odd) {
+      td {
+        background-color: #FCFCE4;
+      }
+    }
+  }
+}
+
+.table {
+  > thead,
+  > tbody,
+  > tfoot {
+    > tr {
+      > td.active,
+      > th.active,
+      &.active > td,
+      &.active > th  {
+        background-color: #FDFD88;
+      }
+    }
+  }
+}

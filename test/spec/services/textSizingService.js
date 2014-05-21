@@ -46,6 +46,13 @@ describe('textSizingService', function() {
       expect(textSizing.breakInChunks).toBeDefined();
     });
 
+    it('should return a single empty chunk if passed a falsy string', function() {
+      expect(textSizing.breakInChunks('', 50).length).toBe(1);
+      expect(textSizing.breakInChunks(null, 50).length).toBe(1);
+      expect(textSizing.breakInChunks(undefined, 50).length).toBe(1);
+      expect(textSizing.breakInChunks(0, 50).length).toBe(1);
+    });
+
     it('should break a text in multiple chunks depending on the maximum size specified', function() {
       var chunks = textSizing.breakInChunks('Hello world', 50);
       expect(chunks.length).toBe(2);

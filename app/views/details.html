@@ -1,0 +1,44 @@
+<!-- Leaving commented out until implemented -->
+<h2 class="panel-heading">
+	Task details
+  <!-- Leaving commented out until implemented
+	  <span class="pull-right glyphicon glyphicon-chevron-up"></span>
+  -->
+</h2>
+<div class="panel-body">
+  <form ng-submit="submitForm(newTask)" class="form-horizontal">
+  
+    <div class="form-group">
+      <label for="newTaskName" class="col-sm-1 control-label">Name</label>
+      <div class="col-sm-4">
+      	<input type="text" name="newTaskName" ng-model="taskBeingEdited.name" placeholder="Your task here" required class="form-control" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="newTaskDependsOnText" class="col-sm-1 control-label">Depends on</label>
+      <div class="col-sm-4">
+      	<input type="text" name="newTaskDependsOnText" ng-model="taskBeingEdited.dependsOnText" placeholder="IDs your task depends on" class="form-control" />
+      </div>
+    </div>
+
+    <div class="form-group">
+    	<div class="col-sm-offset-1 col-sm-4">
+    		<div class="checkbox">
+    			<label>
+    				<input type="checkbox" ng-model="taskBeingEdited.isCompleted">Done</input>
+    			</label>
+    		</div>
+    	</div>
+    </div>
+
+    <div class="form-group">
+    	<div class="col-sm-offset-1 col-sm-4">
+		    <button type="submit" class="btn btn-default btn-primary">
+		    	{{taskBeingEdited.id ? 'Edit Task' : 'Add Task'}}
+		    </button>
+    	</div>
+    </div>
+
+  </form>
+</div>
