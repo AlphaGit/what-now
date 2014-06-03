@@ -15,6 +15,14 @@ angular.module('whatNowApp')
       return taskList;
     };
 
+    this.setTaskList = function(newTaskList) {
+      // remove all previous elements, save the reference
+      taskList.splice(0, taskList.length);
+
+      // add all new elements, save the reference
+      taskList.splice.apply(taskList, [taskList.length, 0].concat(newTaskList));
+    };
+
     this.addTask = function(task) {
       if (!task.id) {
         task.id = ++newTaskId;
