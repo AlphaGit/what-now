@@ -11,14 +11,14 @@
     <div class="form-group">
       <label for="newTaskName" class="col-sm-1 control-label">Name</label>
       <div class="col-sm-4">
-      	<input type="text" name="newTaskName" ng-model="taskBeingEdited.name" placeholder="Your task here" required class="form-control" />
+      	<input type="text" name="newTaskName" ng-model="taskBeingEdited.name" placeholder="Your task here" required class="form-control" autofocus-when="submitted && !nameSelected" ng-focus="nameSelected=true" ng-blur="nameSelected=false" ng-change="submitted=false" />
       </div>
     </div>
 
     <div class="form-group">
       <label for="newTaskDependsOnText" class="col-sm-1 control-label">Depends on</label>
       <div class="col-sm-4">
-      	<input type="text" name="newTaskDependsOnText" ng-model="taskBeingEdited.dependsOnText" placeholder="IDs your task depends on" class="form-control" />
+      	<input type="text" name="newTaskDependsOnText" ng-model="taskBeingEdited.dependsOnText" placeholder="IDs your task depends on" class="form-control" ng-change="submitted=false" />
       </div>
     </div>
 
@@ -26,7 +26,7 @@
     	<div class="col-sm-offset-1 col-sm-4">
     		<div class="checkbox">
     			<label>
-    				<input type="checkbox" ng-model="taskBeingEdited.isCompleted">Done</input>
+    				<input type="checkbox" ng-model="taskBeingEdited.isCompleted" ng-change="submitted=false">Done</input>
     			</label>
     		</div>
     	</div>
@@ -34,7 +34,7 @@
 
     <div class="form-group">
     	<div class="col-sm-offset-1 col-sm-4">
-		    <button type="submit" class="btn btn-default btn-primary">
+		    <button type="submit" class="btn btn-default btn-primary" ng-click="submitted=true">
 		    	{{taskBeingEdited.id ? 'Edit Task' : 'Add Task'}}
 		    </button>
     	</div>

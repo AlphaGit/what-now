@@ -2,6 +2,8 @@
 
 To-do list with a twist.
 
+[Changelog](https://github.com/AlphaGit/what-now/commits/master)
+
 ## Setting up your local environment
 
 Pre-requisites:

@@ -8,6 +8,7 @@ angular.module('whatNowApp')
 
       $scope.submitForm = function() {
         TaskListService.addTask($scope.taskBeingEdited);
+        $scope.taskBeingEdited = {};
       };
 
       $scope.$on('taskSelected', function(evt, selectedTask) {

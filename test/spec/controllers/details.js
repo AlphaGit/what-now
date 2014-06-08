@@ -51,6 +51,15 @@ describe('Controller: DetailsCtrl', function () {
 
         expect(scope.newTask).not.toBe(testTask);
       });
+
+      it('should generate a new taskBeingEdited object', function() {
+        var testTask = { name: 'Testing' };
+        scope.taskBeingEdited = testTask;
+
+        scope.submitForm();
+
+        expect(scope.taskBeingEdited).not.toBe(testTask);
+      });
     });
 
     it('should listen the taskSelected event and use the task as the one being edited', function() {
