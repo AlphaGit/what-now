@@ -4,50 +4,64 @@ angular.module('whatNowApp')
     'use strict';
 
     var svg;
-    var taskPositions;
+    var nodePositions;
     var scope;
 
-    function recalculateTasksPositions (taskList) {
-      var nodeHash = {};
+    function ensureIds (taskList) {
+      var graphingId = 1;
+
+      taskList.forEach(function(task) {
+        task.graphingId = graphingId++;
+      });
+    }
+
+    function getDrawingStructure (taskList) {
+      var taskNodeHash = {};
 
       // created nodes
       var nodes = taskList.map(function (task) {
         var node = sugiyamaService.createNode(task);
-        nodeHash[task.id] = node;
+        taskNodeHash[task.id] = node;
         return node;
       });
 
       // connect nodes
       nodes.forEach(function (node) {
         node.data.dependsOn.forEach(function (taskDependedUpon) {
-          sugiyamaService.connectNodes(nodeHash[taskDependedUpon.id], node);
+          sugiyamaService.connectNodes(taskNodeHash[taskDependedUpon.id], node);
         });
       });
 
-      var columns = sugiyamaService.getDrawingStructure(nodes);
+      return sugiyamaService.getDrawingStructure(nodes);
+    }
 
-      taskPositions = {};
-      var x = 0;
-      var y = 0;
+    function recalculateTasksPositions (taskGrid) {
+      nodePositions = {};
+      var x = 20;
+      var y = 30;
 
-      angular.forEach(columns, function (row) {
-        x += 100;
-
+      angular.forEach(taskGrid, function (row) {
         angular.forEach(row, function (node) {
+          nodePositions[node.graphingId] = { x: x, y: y };
           y += 90;
-
-          taskPositions[node.data.id] = { x: x, y: y };
         });
 
-        y = 0;
+        x += 100;
+        y = 30;
       });
     }
 
-    function drawDependencies (taskList) {
-      angular.forEach(taskList, function (dependentTask) {
-        angular.forEach(dependentTask.dependsOn, function (taskDependedUpon) {
-          var arrowOrigin = taskPositions[taskDependedUpon.id];
-          var arrowDestiny = taskPositions[dependentTask.id];
+    function flattenGrid(taskGrid) {
+      // see http://stackoverflow.com/a/10865042/147507
+      var flattenedArray = [];
+      return flattenedArray.concat.apply(flattenedArray, taskGrid);
+    }
+
+    function drawDependencies (nodeList) {
+      angular.forEach(nodeList, function (node) {
+        angular.forEach(node.nextNodes, function (nextNode) {
+          var arrowOrigin = nodePositions[node.graphingId];
+          var arrowDestiny = nodePositions[nextNode.graphingId];
 
           svg.append('line')
             .attr('x1', arrowOrigin.x)
@@ -62,12 +76,14 @@ angular.module('whatNowApp')
 
     function drawTasks (taskList) {
       var groups = svg.selectAll('g')
-        .data(taskList, function (d) { return d.id; })
+        .data(taskList, function (d) {
+          return d.graphingId;
+        })
         .enter()
         .append('g')
         .attr('transform', function(d) {
-          var x = taskPositions[d.id].x;
-          var y = taskPositions[d.id].y;
+          var x = nodePositions[d.graphingId].x;
+          var y = nodePositions[d.graphingId].y;
           return 'translate(' + x + ', ' + y + ')';
         });
 
@@ -76,12 +92,12 @@ angular.module('whatNowApp')
         .attr({
           cx: 0,
           cy: 0,
-          r: 5,
+          r: function(d) { return sugiyamaService.isFakeNode(d) ? 0 : 5; },
           stroke: 'black',
-          'stroke-width': function (d) { return d.isSelected ? 1 : 0; }
+          'stroke-width': function (d) { return d.data.isSelected ? 1 : 0; }
         })
         .style('fill', function(d) {
-          return d.isSelected ? 'yellow' : 'black';
+          return d.data.isSelected ? 'yellow' : 'black';
         })
         .on('click', function(task) {
           scope.$apply(function() {
@@ -92,8 +108,9 @@ angular.module('whatNowApp')
       /*var labels = */
       groups.append('text')
         .each(function(d) {
+          var task = d.data;
           var el = d3Service.select(this);
-          var chunks = textSizingService.breakInChunks(d.name, 100);
+          var chunks = textSizingService.breakInChunks(task.name, 100);
           var y = 20;
           chunks.forEach(function (chunk) {
             el.append('tspan')
@@ -124,12 +141,19 @@ angular.module('whatNowApp')
     }
 
     function redraw (taskList) {
-      recalculateTasksPositions(taskList);
+      var taskGrid = getDrawingStructure(taskList);
+      var newTaskList = flattenGrid(taskGrid);
 
       svg.selectAll('*').remove();
 
-      drawTasks(taskList);
-      drawDependencies(taskList);
+      // ids needed to recalculate positions and create graphing structure
+      ensureIds(newTaskList);
+
+      // same objects, will also change the newTaskList elements
+      recalculateTasksPositions(taskGrid);
+
+      drawTasks(newTaskList);
+      drawDependencies(newTaskList);
     }
 
     return {

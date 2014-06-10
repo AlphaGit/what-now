@@ -255,7 +255,7 @@ describe('sugiyamaService', function() {
       expect(diagram[1][0]).toBe(node2);
     });
 
-    it('should reorganize several crossings in a single layer', function() {
+    /*it('should reorganize several crossings in a single layer', function() {
       // a1 ------\--- b ------/-- c
       //       /---\----------/
       // a2 --/     \----d
@@ -286,7 +286,7 @@ describe('sugiyamaService', function() {
 
       expect(grid[2].length).toBe(1);
       expect(grid[2][0]).toBe(c);
-    });
+    });*/
   }); // #getDrawingStructure
 
   describe('#hasNextNodes', function() {
@@ -578,6 +578,55 @@ describe('sugiyamaService', function() {
       expect(sugiyama.isFakeNode(grid[2][0])).toBe(true);
       expect(sugiyama.isFakeNode(grid[3][0])).toBe(true);
       expect(grid[4][0]).toBe(node2);
+    });
+
+    it('should add fake nodes in all necessary layers', function() {
+      //           /-------------------------\
+      //          /                           \
+      // node1 --X----------------/--> node4 --\--> node5
+      //          \              /
+      // node2 ----\--> node3 --/
+      //
+      //                      =>
+      //
+      //           /--> (fake) ------> (fake) --\
+      //          /                              \
+      // node1 --X----> (fake) ---/--> node4 -----\--> node5
+      //          \              /
+      // node2 ----\--> node3 --/
+
+      var node1 = sugiyama.createNode(1);
+      var node2 = sugiyama.createNode(2);
+      var node3 = sugiyama.createNode(3);
+      var node4 = sugiyama.createNode(4);
+      var node5 = sugiyama.createNode(5);
+
+      sugiyama.connectNodes(node1, node3);
+      sugiyama.connectNodes(node1, node4);
+      sugiyama.connectNodes(node1, node5);
+      sugiyama.connectNodes(node2, node3);
+      sugiyama.connectNodes(node3, node4);
+      sugiyama.connectNodes(node4, node5);
+
+      var grid = [[node1, node2], [node3], [node4], [node5]];
+
+      sugiyama.addFakeNodes(grid);
+
+      expect(grid[0].length).toBe(2);
+      expect(grid[0][0]).toBe(node1);
+      expect(grid[0][1]).toBe(node2);
+
+      expect(grid[1].length).toBe(3);
+      expect(grid[1][0]).toBe(node3);
+      expect(sugiyama.isFakeNode(grid[1][1])).toBe(true);
+      expect(sugiyama.isFakeNode(grid[1][2])).toBe(true);
+
+      expect(grid[2].length).toBe(2);
+      expect(grid[2][0]).toBe(node4);
+      expect(sugiyama.isFakeNode(grid[2][1])).toBe(true);
+
+      expect(grid[3].length).toBe(1);
+      expect(grid[3][0]).toBe(node5);
     });
   }); // #addFakeNodes
 

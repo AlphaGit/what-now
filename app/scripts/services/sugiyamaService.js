@@ -87,8 +87,9 @@ angular.module('whatNowApp')
         var nextColumn = columns[columnIndex + 1];
         for (var rowIndex = 0; rowIndex < columns[columnIndex].length; rowIndex++) {
           var currentNode = columns[columnIndex][rowIndex];
-          for (var nextNodeIndex = 0; nextNodeIndex < currentNode.nextNodes.length; nextNodeIndex++) {
-            var nextNode = currentNode.nextNodes[nextNodeIndex];
+          var originalNextNodes = currentNode.nextNodes.slice(0);
+          for (var nextNodeIndex = 0; nextNodeIndex < originalNextNodes.length; nextNodeIndex++) {
+            var nextNode = originalNextNodes[nextNodeIndex];
             if (nextColumn.indexOf(nextNode) === -1) {
               sugiyamaService.insertFakeNodeBeforeNext(columns[columnIndex + 1], currentNode, nextNode);
             }
@@ -206,7 +207,6 @@ angular.module('whatNowApp')
       var columns = sugiyamaService.arrangeInLayers(nodeArray);
       sugiyamaService.addFakeNodes(columns);
       sugiyamaService.minimizeCrossings(columns);
-      sugiyamaService.removeFakeNodes(columns);
 
       return columns;
     };
