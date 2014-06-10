@@ -2,6 +2,13 @@
 
 angular.module('whatNowApp')
   .factory('taskDependencyService', [function () {
+    function rebuildDependencyText(task) {
+      var dependsOnIds = task.dependsOn.map(function(t) {
+        return t.id;
+      });
+      task.dependsOnText = dependsOnIds.join(', ');
+    }
+
     this.buildDependencies = function(taskList, newTask) {
       newTask.dependsOn = [];
 
@@ -9,6 +16,9 @@ angular.module('whatNowApp')
       
       for (var idIndex = 0; idIndex < ids.length; idIndex++) {
         var dependsOnId = parseInt(ids[idIndex], 10);
+        if (dependsOnId == newTask.id) {
+          continue;
+        }
 
         // search for referenced task and link it
         var index = taskList.length;
@@ -19,6 +29,8 @@ angular.module('whatNowApp')
           }
         }
       }
+
+      rebuildDependencyText(newTask);
     };
 
     this.removeFromDependencies = function (taskList, taskToRemove) {

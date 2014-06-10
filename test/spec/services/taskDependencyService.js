@@ -61,6 +61,27 @@ describe('taskDependencyService', function() {
       expect(newTask.dependsOn).toBeDefined();
       expect(newTask.dependsOn.length).toBe(3);
     });
+
+    it('should ignore a task marked as self-dependent', function() {
+      var task = { id: 1, name: 'test', dependsOnText: '1' };
+
+      service.buildDependencies([task], task);
+
+      expect(task.dependsOn.length).toBe(0);
+    });
+
+    it('should properly format the dependsOnText property of the task after processing', function() {
+      var taskList = [
+        { id: 0, name: 'first task', dependsOnText: '', dependsOn: [] },
+        { id: 1, name: 'second task', dependsOnText: '', dependsOn: [] },
+        { id: 2, name: 'third task', dependsOnText: '', dependsOn: [] }
+      ];
+
+      var newTask = { id: 3, name: 'depends on all', dependsOnText: '0, 1    ,           2       ' };
+      service.buildDependencies(taskList, newTask);
+
+      expect(newTask.dependsOnText).toBe('0, 1, 2');
+    });
   }); // #buildDependencies
 
   describe('#removeFromDependencies', function() {
