@@ -7,18 +7,39 @@
 </h2>
 <div class="panel-body">
   <form ng-submit="submitForm(newTask)" class="form-horizontal">
-  
+
     <div class="form-group">
       <label for="newTaskName" class="col-sm-1 control-label">Name</label>
       <div class="col-sm-4">
-      	<input type="text" name="newTaskName" ng-model="taskBeingEdited.name" placeholder="Your task here" required class="form-control" autofocus-when="submitted && !nameSelected" ng-focus="nameSelected=true" ng-blur="nameSelected=false" ng-change="submitted=false" />
+      	<input type="text"
+               name="newTaskName"
+               ng-model="taskBeingEdited.name"
+               placeholder="Your task here"
+               required
+               class="form-control"
+               autofocus-when="submitted && !nameSelected"
+               ng-focus="nameSelected=true; submitted=false;"
+               ng-blur="nameSelected=false"
+               ng-change="submitted=false" />
       </div>
     </div>
 
     <div class="form-group">
       <label for="newTaskDependsOnText" class="col-sm-1 control-label">Depends on</label>
       <div class="col-sm-4">
-      	<input type="text" name="newTaskDependsOnText" ng-model="taskBeingEdited.dependsOnText" placeholder="IDs your task depends on" class="form-control" ng-change="submitted=false" />
+        <tags-input
+          ng-model="taskBeingEdited.dependsOn"
+          display-property="name"
+          placeholder="Type to select a new task"
+          allow-leftover-text="false"
+          add-on-comma="false"
+          add-on-blur="false"
+          min-length="1"
+          replace-spaces-with-dashes="false"
+          add-from-autocomplete-only="true">
+          <auto-complete source="filteredTaskList($query)" min-length="1">
+          </auto-complete>
+        </tags-input>
       </div>
     </div>
 

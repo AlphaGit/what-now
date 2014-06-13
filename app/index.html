@@ -11,6 +11,7 @@
   <meta name="viewport" content="width=device-width">
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
+  <link rel="stylesheet" href="bower_components/ng-tags-input/ng-tags-input.min.css">;
   <!-- build:css({.tmp,app}) styles/app.css -->
     <link rel="stylesheet" href="styles/app.css">
   <!-- endbuild -->
@@ -26,11 +27,6 @@
     <![endif]-->
 
     <div ng-view></div>
-
-    <!-- Removed: used only during development.
-      TODO: Find a way to remove it from the build.
-      <div ng-controller="ExampleDataCtrl"></div>
-    -->
 
     <div class="footer">
       <p class="credits">
@@ -70,6 +66,8 @@
       <script src="bower_components/sass-bootstrap/js/tab.js"></script>
       <script src="bower_components/sass-bootstrap/js/tooltip.js"></script>
       <script src="bower_components/sass-bootstrap/js/popover.js"></script>
+
+      <script src="bower_components/ng-tags-input/ng-tags-input.js"></script>
     <!-- endbuild -->
 
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
@@ -81,10 +79,6 @@
       <script src="scripts/controllers/details.js"></script>
       <script src="scripts/controllers/taskPersistence.js"></script>
 
-      <!-- Removed: used only during development.
-        TODO: Find a way to remove it from the build.
-        <script src="scripts/controllers/exampleData.js"></script>
-      -->
       <script src="scripts/services/sugiyamaService.js"></script>
       <script src="scripts/services/d3Service.js"></script>
       <script src="scripts/services/jQueryService.js"></script>

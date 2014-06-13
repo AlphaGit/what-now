@@ -37,15 +37,6 @@ describe('taskListService', function() {
       expect(tasks[0]).toBe(task);
     });
 
-    it('should call the task dependency service to build the dependencies for the task', function() {
-      spyOn(taskDependencyServiceMock, 'buildDependencies');
-
-      var task = { id: 1, name: 'Some task' };
-      service.addTask(task);
-
-      expect(taskDependencyServiceMock.buildDependencies).toHaveBeenCalledWith(jasmine.any(Object), task);
-    });
-
     it('should not add the same task twice', function() {
       var task = service.generateNewTask();
 
@@ -156,4 +147,46 @@ describe('taskListService', function() {
       expect(rootScopeMock.$broadcast).toHaveBeenCalledWith('taskSelected', task);
     });
   });
+
+  describe('#getFilteredTasks', function() {
+    it('should be defined', function() {
+      expect(service.getFilteredTasks).toBeDefined();
+    });
+
+    it('should return a list of tasks filtered by name', function() {
+      var task1 = service.generateNewTask();
+      var task2 = service.generateNewTask();
+      var task3 = service.generateNewTask();
+
+      task1.name = 'A';
+      task2.name = 'B1';
+      task3.name = 'B2';
+
+      service.addTask(task1);
+      service.addTask(task2);
+      service.addTask(task3);
+
+      var aFiltered = service.getFilteredTasks('A');
+      expect(aFiltered).toBeDefined();
+      expect(aFiltered.length).toBe(1);
+      expect(aFiltered[0]).toBe(task1);
+
+      var bFiltered = service.getFilteredTasks('B');
+      expect(bFiltered).toBeDefined();
+      expect(bFiltered.length).toBe(2);
+      expect(bFiltered[0]).toBe(task2);
+      expect(bFiltered[1]).toBe(task3);
+    });
+
+    it('should not differentiate based on casing', function() {
+      var task1 = service.generateNewTask();
+      task1.name = 'A';
+      service.addTask(task1);
+
+      var filtered = service.getFilteredTasks('a');
+
+      expect(filtered.length).toBe(1);
+      expect(filtered[0]).toBe(task1);
+    });
+  }); // #getFilteredTasks
 });

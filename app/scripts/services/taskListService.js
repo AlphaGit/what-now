@@ -3,7 +3,7 @@
 angular.module('whatNowApp')
   .factory('taskListService', ['$rootScope', 'taskDependencyService',
     function ($rootScope, TaskDependencyService) {
-    
+
     var taskList = [];
     var newTaskId = 0;
 
@@ -28,7 +28,6 @@ angular.module('whatNowApp')
         task.id = ++newTaskId;
       }
 
-      TaskDependencyService.buildDependencies(taskList, task);
       if (taskList.indexOf(task) === -1) {
         taskList.push(task);
       }
@@ -51,6 +50,13 @@ angular.module('whatNowApp')
       });
 
       $rootScope.$broadcast('taskSelected', taskToSelect);
+    };
+
+    this.getFilteredTasks = function(filter) {
+      filter = filter.toLowerCase();
+      return taskList.filter(function(task) {
+        return task.name.toLowerCase().indexOf(filter) === 0;
+      });
     };
 
     return this;

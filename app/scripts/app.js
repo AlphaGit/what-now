@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('whatNowApp', ['ngRoute'])
+angular.module('whatNowApp', ['ngRoute', 'ngTagsInput'])
   .config(function ($routeProvider) {
     $routeProvider
       .when('/', {

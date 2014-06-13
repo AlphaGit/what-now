@@ -70,10 +70,26 @@ describe('Controller: TaskListCtrl', function () {
         spyOn(taskListServiceMock, 'selectTask');
 
         var task = { id: 0 };
-        
+
         scope.selectTask(task);
 
         expect(taskListServiceMock.selectTask).toHaveBeenCalledWith(task);
+      });
+    });
+
+    describe('#getDependsOnText', function() {
+      it('should be defined', function() {
+        expect(scope.getDependsOnText).toBeDefined();
+      });
+
+      it('should return a list of dependencies for a task', function() {
+        var task1 = { id: 1 };
+        var task2 = { id: 2 };
+        var task3 = { id: 3, dependsOn: [task1, task2] };
+
+        var dependsOnText = scope.getDependsOnText(task3);
+
+        expect(dependsOnText).toBe('1, 2');
       });
     });
   });

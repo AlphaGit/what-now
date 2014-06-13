@@ -37,7 +37,7 @@ angular.module('whatNowApp')
 
     function recalculateTasksPositions (taskGrid) {
       nodePositions = {};
-      var x = 20;
+      var x = 30;
       var y = 30;
 
       angular.forEach(taskGrid, function (row) {

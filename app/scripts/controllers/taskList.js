@@ -28,5 +28,11 @@ angular.module('whatNowApp')
       $scope.selectTask = function(taskToSelect) {
         TaskListService.selectTask(taskToSelect);
       };
+
+      $scope.getDependsOnText = function(task) {
+        return task.dependsOn.map(function(dependencyTask) {
+          return dependencyTask.id;
+        }).join(', ');
+      };
     }
   ]);
