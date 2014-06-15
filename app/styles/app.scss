@@ -53,6 +53,7 @@ body {
   }
 }
 
+
 .glyphicon-small {
   font-size: 10px;
 }
@@ -81,3 +82,10 @@ body {
 @import 'main.scss';
 @import 'task-list.scss';
 @import 'tags.scss';
+
+/* hiding unnecessary stuff in smaller devices */
+@media screen and (max-width: 490px) {
+  .app-subtitle {
+    display: none;
+  }
+}
