@@ -17,7 +17,11 @@
   "trailing": true,
   "smarttabs": true,
   "globals": {
-    "angular": false
+    "angular": false,
+
+    // model class names
+    "Node": false,
+    "Task": false
   },
 
   "debug": true

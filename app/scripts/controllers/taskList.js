@@ -9,7 +9,7 @@ angular.module('whatNowApp')
 
       /******************** controller public members ********************/
       this.addTask = function() {
-        var task = TaskListService.generateNewTask();
+        var task = new Task('(New task)');
         TaskListService.addTask(task);
       };
 
@@ -30,8 +30,8 @@ angular.module('whatNowApp')
       };
 
       $scope.getDependsOnText = function(task) {
-        return task.dependsOn.map(function(dependencyTask) {
-          return dependencyTask.id;
+        return task.previous.map(function(dependencyTask) {
+          return dependencyTask.taskId;
         }).join(', ');
       };
     }

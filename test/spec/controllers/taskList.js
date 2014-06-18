@@ -29,9 +29,7 @@ describe('Controller: TaskListCtrl', function () {
       });
 
       it('should call the TaskListService addTask method', function() {
-        var mockTask = { id: 0 };
-        spyOn(taskListServiceMock, 'addTask');
-        spyOn(taskListServiceMock, 'generateNewTask').andReturn(mockTask);
+        var spy = spyOn(taskListServiceMock, 'addTask');
 
         inject(function($controller) {
           ctrl = $controller('TaskListCtrl', {
@@ -42,8 +40,13 @@ describe('Controller: TaskListCtrl', function () {
 
         ctrl.addTask();
 
-        expect(taskListServiceMock.generateNewTask).toHaveBeenCalled();
-        expect(taskListServiceMock.addTask).toHaveBeenCalledWith(mockTask);
+        expect(taskListServiceMock.addTask).toHaveBeenCalled();
+        var spyCallArgument = spy.argsForCall[0][0];
+        expect(spyCallArgument instanceof Task).toBe(true);
+
+        // default values for the new task
+        expect(spyCallArgument.name).toBe('(New task)');
+        expect(spyCallArgument.isComplete).toBe(false);
       });
     }); // #addTask
   }); // controller
@@ -83,13 +86,15 @@ describe('Controller: TaskListCtrl', function () {
       });
 
       it('should return a list of dependencies for a task', function() {
-        var task1 = { id: 1 };
-        var task2 = { id: 2 };
-        var task3 = { id: 3, dependsOn: [task1, task2] };
+        var task1 = new Task('task1');
+        var task2 = new Task('task2');
+        var task3 = new Task('task3');
+        task3.addPrevious(task1);
+        task3.addPrevious(task2);
 
         var dependsOnText = scope.getDependsOnText(task3);
 
-        expect(dependsOnText).toBe('1, 2');
+        expect(dependsOnText).toBe([task1.taskId, task2.taskId].join(', '));
       });
     });
   });

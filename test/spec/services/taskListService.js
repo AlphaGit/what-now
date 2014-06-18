@@ -2,23 +2,13 @@
 
 describe('taskListService', function() {
   var service;
-  var taskDependencyServiceMock = {
-    buildDependencies: function() { },
-    removeFromDependencies: function() { }
-  };
-  var rootScopeMock = {
-    $broadcast: function() {}
-  };
+  var rootScope;
 
   beforeEach(function() {
     module('whatNowApp');
 
-    module(function ($provide) {
-      $provide.value('taskDependencyService', taskDependencyServiceMock);
-      $provide.value('$rootScope', rootScopeMock);
-    });
-
-    inject(function(taskListService) {
+    inject(function($rootScope, taskListService) {
+      rootScope = $rootScope;
       service = taskListService;
     });
   });
@@ -34,33 +24,67 @@ describe('taskListService', function() {
 
       var tasks = service.getTaskList();
       expect(tasks.length).toBe(1);
-      expect(tasks[0]).toBe(task);
+      expect(tasks[0].name).toBe(task);
     });
 
     it('should not add the same task twice', function() {
-      var task = service.generateNewTask();
+      var task = new Task('test task');
 
       service.addTask(task);
       expect(service.getTaskList().length).toBe(1);
 
       service.addTask(task);
       expect(service.getTaskList().length).toBe(1);
-    });
-
-    it('should assign an id to the task if it doesn\'t have one', function() {
-      var task = { name: 'task' };
-
-      service.addTask(task);
-
-      expect(task.id).toBeTruthy();
     });
 
     it('should select the task', function() {
-      var task = { name: 'task' };
+      var task = new Task('task');
 
       service.addTask(task);
 
       expect(task.isSelected).toBe(true);
+    });
+
+    it('should update the tasks to execute next', function() {
+      var task1 = new Task('1');
+
+      service.addTask(task1);
+      rootScope.$digest();
+
+      expect(task1.isSuggested).toBe(true);
+
+      var task2 = new Task('2');
+      task1.addPrevious(task2);
+      service.addTask(task2);
+      rootScope.$digest();
+
+      expect(task1.isSuggested).toBe(false);
+      expect(task2.isSuggested).toBe(true);
+
+      var task3 = new Task('3');
+      task2.addPrevious(task3);
+      service.addTask(task3);
+      rootScope.$digest();
+
+      expect(task1.isSuggested).toBe(false);
+      expect(task2.isSuggested).toBe(false);
+      expect(task3.isSuggested).toBe(true);
+    });
+
+    it('should indicate two tasks as possible suggestions', function() {
+      var task1 = new Task('1');
+      var task2 = new Task('2');
+
+      service.addTask(task1);
+      rootScope.$digest();
+
+      expect(task1.isSuggested).toBe(true);
+
+      service.addTask(task2);
+      rootScope.$digest();
+
+      expect(task1.isSuggested).toBe(true);
+      expect(task2.isSuggested).toBe(true);
     });
   });
 
@@ -70,7 +94,7 @@ describe('taskListService', function() {
     });
 
     it('should remove the passed task from the task list', function() {
-      var testTask = { name: 'Testing' };
+      var testTask = new Task('Testing');
 
       service.addTask(testTask);
 
@@ -79,15 +103,17 @@ describe('taskListService', function() {
       expect(service.getTaskList().length).toBe(0);
     });
 
-    it('should call the task dependency service to remove the dependencies for the task', function() {
-      spyOn(taskDependencyServiceMock, 'removeFromDependencies');
+    it('should remove the dependencies for the tasks once a task is removed', function() {
+      var task1 = new Task('1');
+      var task2 = new Task('2');
+      task2.addPrevious(task1);
 
-      var task = { name: 'Testing' };
+      service.addTask(task1);
+      service.addTask(task2);
 
-      service.addTask(task);
-      service.removeTask(task);
+      service.removeTask(task1);
 
-      expect(taskDependencyServiceMock.removeFromDependencies).toHaveBeenCalledWith(jasmine.any(Object), task);
+      expect(task1.previous.length).toBe(0);
     });
 
     it('should throw an error if it tries to remove a task that\'s not on the list', function() {
@@ -101,23 +127,13 @@ describe('taskListService', function() {
     });
   });
 
-  describe('#generateNewTask', function() {
-    it('should return a new task each time', function() {
-      var task1 = service.generateNewTask();
-      var task2 = service.generateNewTask();
-
-      expect(task1).not.toBe(task2);
-      expect(task1.id).not.toBe(task2.id);
-    });
-  });
-
   describe('#selectTask', function() {
     it('should be defined', function() {
       expect(service.selectTask).toBeDefined();
     });
 
     it('should set the isSelected property on the task', function() {
-      var task = service.generateNewTask();
+      var task = new Task('test');
 
       service.addTask(task);
       service.selectTask(task);
@@ -126,8 +142,8 @@ describe('taskListService', function() {
     });
 
     it('should remove the isSelected property on other tasks', function() {
-      var task1 = service.generateNewTask();
-      var task2 = service.generateNewTask();
+      var task1 = new Task('task1');
+      var task2 = new Task('task2');
       task2.isSelected = true;
 
       service.addTask(task1);
@@ -139,12 +155,12 @@ describe('taskListService', function() {
     });
 
     it('should broadcast an event notifying the application that this task has been selected', function() {
-      var task = service.generateNewTask();
-      spyOn(rootScopeMock, '$broadcast');
+      var task = new Task('test');
+      spyOn(rootScope, '$broadcast');
 
       service.selectTask(task);
 
-      expect(rootScopeMock.$broadcast).toHaveBeenCalledWith('taskSelected', task);
+      expect(rootScope.$broadcast).toHaveBeenCalledWith('taskSelected', task);
     });
   });
 
@@ -154,9 +170,9 @@ describe('taskListService', function() {
     });
 
     it('should return a list of tasks filtered by name', function() {
-      var task1 = service.generateNewTask();
-      var task2 = service.generateNewTask();
-      var task3 = service.generateNewTask();
+      var task1 = new Task('task1');
+      var task2 = new Task('task2');
+      var task3 = new Task('task3');
 
       task1.name = 'A';
       task2.name = 'B1';
@@ -179,8 +195,7 @@ describe('taskListService', function() {
     });
 
     it('should not differentiate based on casing', function() {
-      var task1 = service.generateNewTask();
-      task1.name = 'A';
+      var task1 = new Task('A');
       service.addTask(task1);
 
       var filtered = service.getFilteredTasks('a');

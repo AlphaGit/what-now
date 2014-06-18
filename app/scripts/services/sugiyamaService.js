@@ -8,7 +8,8 @@ angular.module('whatNowApp')
       var areAllPresent = true;
       var evaluatingIndex = nodesToCheck.length - 1;
       while (areAllPresent && evaluatingIndex >= 0) {
-        areAllPresent = listOfNodes.indexOf(nodesToCheck[evaluatingIndex--]) > -1;
+        var nodeTocheck = nodesToCheck[evaluatingIndex--];
+        areAllPresent = sugiyamaService.isFakeNode(nodeTocheck) || listOfNodes.indexOf(nodeTocheck) > -1;
       }
 
       return areAllPresent;
@@ -30,7 +31,7 @@ angular.module('whatNowApp')
 
       while (nodeIndex >= 0) {
         var currentNode = availableNodes[nodeIndex];
-        if (sugiyamaService.areAllPresent(availableDependencies, currentNode.previousNodes)) {
+        if (sugiyamaService.areAllPresent(availableDependencies, currentNode.previous)) {
           layer.push(currentNode);
           availableNodes.splice(nodeIndex, 1);
         }
@@ -62,21 +63,17 @@ angular.module('whatNowApp')
       return layers;
     };
 
-    sugiyamaService.hasNextNodes = function (node) {
-      return !!node.nextNodes.length;
-    };
-
     var fakeNodeData = { __fake: true };
     sugiyamaService.isFakeNode = function (node) {
       return node.data === fakeNodeData;
     };
 
     sugiyamaService.insertFakeNodeBeforeNext = function(list, currentNode, nextNode) {
-      var fakeNode = sugiyamaService.createNode(fakeNodeData);
+      var fakeNode = new Node(fakeNodeData);
 
-      sugiyamaService.disconnectNodes(currentNode, nextNode);
-      sugiyamaService.connectNodes(fakeNode, nextNode);
-      sugiyamaService.connectNodes(currentNode, fakeNode);
+      currentNode.removeNext(nextNode);
+      fakeNode.addNext(nextNode);
+      currentNode.addNext(fakeNode);
 
       list.push(fakeNode);
     };
@@ -87,7 +84,7 @@ angular.module('whatNowApp')
         var nextColumn = columns[columnIndex + 1];
         for (var rowIndex = 0; rowIndex < columns[columnIndex].length; rowIndex++) {
           var currentNode = columns[columnIndex][rowIndex];
-          var originalNextNodes = currentNode.nextNodes.slice(0);
+          var originalNextNodes = currentNode.next.slice(0);
           for (var nextNodeIndex = 0; nextNodeIndex < originalNextNodes.length; nextNodeIndex++) {
             var nextNode = originalNextNodes[nextNodeIndex];
             if (nextColumn.indexOf(nextNode) === -1) {
@@ -105,12 +102,12 @@ angular.module('whatNowApp')
       var originalNode2 = grid[columnIndex][rowIndex2];
       var nextColumn = grid[columnIndex + 1];
 
-      for (var nextNode1Index = 0; nextNode1Index < originalNode1.nextNodes.length; nextNode1Index++) {
-        var nextNode1 = originalNode1.nextNodes[nextNode1Index];
+      for (var nextNode1Index = 0; nextNode1Index < originalNode1.next.length; nextNode1Index++) {
+        var nextNode1 = originalNode1.next[nextNode1Index];
         var nextNode1Row = nextColumn.indexOf(nextNode1);
 
-        for (var nextNode2Index = 0; nextNode2Index < originalNode2.nextNodes.length; nextNode2Index++) {
-          var nextNode2 = originalNode2.nextNodes[nextNode2Index];
+        for (var nextNode2Index = 0; nextNode2Index < originalNode2.next.length; nextNode2Index++) {
+          var nextNode2 = originalNode2.next[nextNode2Index];
           var nextNode2Row = nextColumn.indexOf(nextNode2);
 
           if (nextNode1Row > nextNode2Row) {
@@ -132,27 +129,28 @@ angular.module('whatNowApp')
     };
 
     sugiyamaService.minimizeCrossings = function(grid) {
-      for (var columnIndex = 0; columnIndex < grid.length; columnIndex++) {
+      for (var columnIndex = 0; columnIndex < grid.length - 1; columnIndex++) {
         minimizeCrossingsArisingFromColumn(grid, columnIndex);
       }
     };
 
     var unlinkFakeNode = function (fakeNode) {
       // fake node: remove and connect nodes that it is connecting
-      var previousNodes = fakeNode.previousNodes.slice(0); // copy since it's going to be modified
-      previousNodes.forEach(function (previousNode) {
-        // previous --> next1, previous --> next2, etc
-        fakeNode.nextNodes.forEach(function (nextNode) {
-          sugiyamaService.connectNodes(previousNode, nextNode);
-        });
+      var previousNodes = fakeNode.previous; // copy since it's going to be modified
+      var nextNodes = fakeNode.next;
 
-        // previous --X--> fake
-        sugiyamaService.disconnectNodes(previousNode, fakeNode);
+      previousNodes.forEach(function (previousNode) {
+        previousNode.removeNext(fakeNode);
       });
 
-      var nextNodes = fakeNode.nextNodes.slice(0); // copy since it's going to be modified
       nextNodes.forEach(function (nextNode) {
-        sugiyamaService.disconnectNodes(fakeNode, nextNode);
+        fakeNode.removeNext(nextNode);
+      });
+
+      previousNodes.forEach(function (previousNode) {
+        nextNodes.forEach(function (nextNode) {
+          previousNode.addNext(nextNode);
+        });
       });
     };
 
@@ -170,36 +168,6 @@ angular.module('whatNowApp')
     sugiyamaService.removeFakeNodes = function (grid) {
       for (var columnIndex = 0; columnIndex < grid.length; columnIndex++) {
         removeFakeNodesColumn(grid[columnIndex]);
-      }
-    };
-
-    sugiyamaService.createNode = function (data) {
-      return {
-        data: data,
-        nextNodes: [],
-        previousNodes: []
-      };
-    };
-
-    sugiyamaService.connectNodes = function (node, nextNode) {
-      if (node.nextNodes.indexOf(nextNode) === -1) {
-        node.nextNodes.push(nextNode);
-      }
-
-      if (nextNode.previousNodes.indexOf(node) === -1) {
-        nextNode.previousNodes.push(node);
-      }
-    };
-
-    sugiyamaService.disconnectNodes = function (previousNode, nextNode) {
-      var nextNodeIndex = previousNode.nextNodes.indexOf(nextNode);
-      if (nextNodeIndex > -1) {
-        previousNode.nextNodes.splice(nextNodeIndex, 1);
-      }
-
-      var previousNodeIndex = nextNode.previousNodes.indexOf(nextNode);
-      if (previousNodeIndex > -1) {
-        nextNode.previousNodes.splice(previousNodeIndex, 1);
       }
     };
 

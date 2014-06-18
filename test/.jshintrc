@@ -30,7 +30,11 @@
     "inject": false,
     "it": false,
     "spyOn": false,
-    "jasmine": false
+    "jasmine": false,
+
+    // model class names
+    "Node": false,
+    "Task": false
   }
 }
 

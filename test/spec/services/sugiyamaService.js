@@ -10,108 +10,6 @@ describe('sugiyamaService', function() {
     });
   });
 
-  describe('#createNode', function() {
-    it('should be defined', function() {
-      expect(sugiyama.createNode).toBeDefined();
-    });
-
-    it('should return a defined object', function() {
-      expect(sugiyama.createNode()).toBeDefined();
-    });
-
-    it('should return an object that can retrieve the data back', function() {
-      var data = { myData: 1 };
-      expect(sugiyama.createNode(data).data).toBe(data);
-    });
-
-    it('should provide a node with no next nodes', function() {
-      var node = sugiyama.createNode(1);
-      expect(node.nextNodes.length).toBe(0);
-      expect(node.previousNodes.length).toBe(0);
-    });
-  }); // #createNode
-
-  describe('#connectNodes', function() {
-    it('should be defined', function() {
-      expect(sugiyama.connectNodes).toBeDefined();
-    });
-
-    it('should add a node to the list of next nodes', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      sugiyama.connectNodes(node1, node2);
-
-      expect(node1.nextNodes.length).toBe(1);
-      expect(node1.nextNodes[0]).toBe(node2);
-      expect(node2.nextNodes.length).toBe(0);
-    });
-
-    it('should add a node to the list of previous nodes', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      sugiyama.connectNodes(node1, node2);
-
-      expect(node2.previousNodes.length).toBe(1);
-      expect(node2.previousNodes[0]).toBe(node1);
-      expect(node1.previousNodes.length).toBe(0);
-    });
-
-    it('should not add a node twice to a list of next nodes', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      sugiyama.connectNodes(node1, node2);
-      sugiyama.connectNodes(node1, node2);
-
-      expect(node1.nextNodes.length).toBe(1);
-      expect(node1.nextNodes[0]).toBe(node2);
-    });
-
-    it('should not create bidirectional node connections', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      sugiyama.connectNodes(node1, node2);
-
-      expect(node2.nextNodes.length).toBe(0);
-    });
-  }); // #connectNodes
-
-  describe('#disconnectNodes', function() {
-    it('should be defined', function() {
-      expect(sugiyama.disconnectNodes).toBeDefined();
-    });
-
-    it('should update the list of next nodes from the first node', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      sugiyama.connectNodes(node1, node2);
-
-      sugiyama.disconnectNodes(node1, node2);
-
-      expect(node1.nextNodes.length).toBe(0);
-    });
-
-    it('should update the list of previous nodes from the second node', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      sugiyama.createNode(node1, node2);
-
-      sugiyama.disconnectNodes(node1, node2);
-
-      expect(node2.previousNodes.length).toBe(0);
-    });
-
-    it('should not throw if the nodes were not connected', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-
-      var disconnect = function() {
-        sugiyama.disconnectNodes(node1, node2);
-      };
-
-      expect(disconnect).not.toThrow();
-    });
-  }); // #disconnectNodes
-
   describe('#areAllPresent', function() {
     it('should be defined', function() {
       expect(sugiyama.areAllPresent).toBeDefined();
@@ -122,28 +20,28 @@ describe('sugiyamaService', function() {
     });
 
     it('should return false if the nodes are not present (empty list)', function() {
-      var node1 = sugiyama.createNode(1);
+      var node1 = new Node(1);
 
       expect(sugiyama.areAllPresent([], [node1])).toBe(false);
     });
 
     it('should return false if the nodes are not present (items in list)', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
 
       expect(sugiyama.areAllPresent([node2], [node1])).toBe(false);
     });
 
     it('should return true if all nodes are present', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
 
       expect(sugiyama.areAllPresent([node1, node2], [node1, node2])).toBe(true);
     });
 
     it('should return false if only part of them are present', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
 
       expect(sugiyama.areAllPresent([node1], [node1, node2])).toBe(false);
     });
@@ -155,30 +53,30 @@ describe('sugiyamaService', function() {
     });
 
     it('should return false for an empty list', function() {
-      var node = sugiyama.createNode(1);
+      var node = new Node(1);
 
-      expect(sugiyama.isAnyPresent([], node.nextNodes)).toBe(false);
+      expect(sugiyama.isAnyPresent([], node.next)).toBe(false);
     });
 
     it('should return true if the nodes are present in the list', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
 
       expect(sugiyama.isAnyPresent([node2, node1], [node2, node1])).toBe(true);
     });
 
     it('should return false if the nodes are not present in the list', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
 
       expect(sugiyama.isAnyPresent([node3], [node1, node2])).toBe(false);
     });
 
     it('should return true if at least one node is present in the list', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
 
       expect(sugiyama.isAnyPresent([node1], [node1, node2, node3])).toBe(true);
     });
@@ -200,13 +98,13 @@ describe('sugiyamaService', function() {
     });
 
     it('should graph more than two layers of dependencies', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
 
-      sugiyama.connectNodes(node1, node2);
-      sugiyama.connectNodes(node1, node3);
-      sugiyama.connectNodes(node2, node3);
+      node1.addNext(node2);
+      node1.addNext(node3);
+      node2.addNext(node3);
       // result: node1 -> node2 -> node3
 
       var layers = sugiyama.arrangeInLayers([node1, node2, node3]);
@@ -233,7 +131,7 @@ describe('sugiyamaService', function() {
     });
 
     it('should return an array of arrays', function() {
-      var node = sugiyama.createNode(1);
+      var node = new Node(1);
 
       var diagram = sugiyama.getDrawingStructure([node]);
 
@@ -242,10 +140,10 @@ describe('sugiyamaService', function() {
     });
 
     it('should graph dependencies in columns', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
 
-      sugiyama.connectNodes(node1, node2);
+      node1.addNext(node2);
       var diagram = sugiyama.getDrawingStructure([node1, node2]);
 
       expect(diagram.length).toBe(2);
@@ -255,69 +153,41 @@ describe('sugiyamaService', function() {
       expect(diagram[1][0]).toBe(node2);
     });
 
-    /*it('should reorganize several crossings in a single layer', function() {
-      // a1 ------\--- b ------/-- c
-      //       /---\----------/
-      // a2 --/     \----d
+    it('should reorganize several crossings in a single layer', function() {
+      // a1 ------\--- b ------/-- c      a1 --\--- b ---/-- c
+      //       /---\----------/       =>        \-- d   /
+      // a2 --/     \----d                a2 ----------/
+      //
       // a1, a2 independent
       // (b depends on a1)
       // (c depends on b and a2)
       // (d depends on a1)
 
-      var a1 = sugiyama.createNode('a1');
-      var a2 = sugiyama.createNode('a2');
-      var b = sugiyama.createNode('b');
-      var c = sugiyama.createNode('c');
-      var d = sugiyama.createNode('d');
+      var a1 = new Node('a1');
+      var a2 = new Node('a2');
+      var b = new Node('b');
+      var c = new Node('c');
+      var d = new Node('d');
 
-      sugiyama.connectNodes(a1, b);
-      sugiyama.connectNodes(a1, d);
-      sugiyama.connectNodes(b, c);
-      sugiyama.connectNodes(a2, c);
+      a1.addNext(b);
+      a1.addNext(d);
+      b.addNext(c);
+      a2.addNext(c);
       
       var grid = sugiyama.getDrawingStructure([a1, a2, b, c, d]);
       expect(grid[0].length).toBe(2);
-      expect(grid[0][0]).toBe(a2);
-      expect(grid[0][1]).toBe(a1);
+      expect(grid[0][0].data).toBe(a2.data);
+      expect(grid[0][1].data).toBe(a1.data);
 
-      expect(grid[1].length).toBe(2);
-      expect(grid[1][0]).toBe(d);
-      expect(grid[1][1]).toBe(b);
+      expect(grid[1].length).toBe(3);
+      expect(sugiyama.isFakeNode(grid[1][0])).toBe(true);
+      expect(grid[1][1].data).toBe(d.data);
+      expect(grid[1][2].data).toBe(b.data);
 
       expect(grid[2].length).toBe(1);
-      expect(grid[2][0]).toBe(c);
-    });*/
+      expect(grid[2][0].data).toBe(c.data);
+    });
   }); // #getDrawingStructure
-
-  describe('#hasNextNodes', function() {
-    it('has to be defined', function() {
-      expect(sugiyama.hasNextNodes).toBeDefined();
-    });
-
-    it('should return false for an unconnected node', function() {
-      var node = sugiyama.createNode(1);
-
-      expect(sugiyama.hasNextNodes(node)).toBe(false);
-    });
-
-    it('should return false for a node with no next nodes', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-
-      sugiyama.connectNodes(node1, node2);
-
-      expect(sugiyama.hasNextNodes(node2)).toBe(false);
-    });
-
-    it('should return true for a node with next nodes', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      
-      sugiyama.connectNodes(node1, node2);
-
-      expect(sugiyama.hasNextNodes(node1)).toBe(true);
-    });
-  }); // #hasNextNodes
 
   describe('#insertFakeNodeBeforeNext', function() {
     it('has to be defined', function() {
@@ -325,9 +195,9 @@ describe('sugiyamaService', function() {
     });
 
     it('should insert a fake node in the provided list', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      sugiyama.connectNodes(node1, node2);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      node1.addNext(node2);
       var list = [];
 
       sugiyama.insertFakeNodeBeforeNext(list, node1, node2);
@@ -337,24 +207,24 @@ describe('sugiyamaService', function() {
     });
 
     it('should bypass all next nodes with the fake node', function() {
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
 
-      sugiyama.connectNodes(node1, node2);
-      sugiyama.connectNodes(node1, node3);
+      node1.addNext(node2);
+      node1.addNext(node3);
 
       var list = [];
       sugiyama.insertFakeNodeBeforeNext(list, node1, node2);
       sugiyama.insertFakeNodeBeforeNext(list, node1, node3);
 
-      expect(node1.nextNodes.length).toBe(2);
-      expect(sugiyama.isFakeNode(node1.nextNodes[0])).toBe(true);
-      expect(sugiyama.isFakeNode(node1.nextNodes[1])).toBe(true);
-      expect(node1.nextNodes[0].nextNodes.length).toBe(1);
-      expect(node1.nextNodes[1].nextNodes.length).toBe(1);
-      expect(node1.nextNodes[0].nextNodes[0] === node2 && node1.nextNodes[1].nextNodes[0] === node3 ||
-        node1.nextNodes[0].nextNodes[0] === node3 && node1.nextNodes[1].nextNodes[0] === node2).toBe(true);
+      expect(node1.next.length).toBe(2);
+      expect(sugiyama.isFakeNode(node1.next[0])).toBe(true);
+      expect(sugiyama.isFakeNode(node1.next[1])).toBe(true);
+      expect(node1.next[0].next.length).toBe(1);
+      expect(node1.next[1].next.length).toBe(1);
+      expect(node1.next[0].next[0] === node2 && node1.next[1].next[0] === node3 ||
+        node1.next[0].next[0] === node3 && node1.next[1].next[0] === node2).toBe(true);
     });
   }); // #insertFakeNodeBeforeNext
 
@@ -368,13 +238,13 @@ describe('sugiyamaService', function() {
       //          X            =>
       // node3 --/ \-- node4       node3 ------- node2
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
-      var node4 = sugiyama.createNode(4);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
+      var node4 = new Node(4);
 
-      sugiyama.connectNodes(node1, node4);
-      sugiyama.connectNodes(node3, node2);
+      node1.addNext(node4);
+      node3.addNext(node2);
 
       var grid = [ [node1, node3], [node2, node4] ];
 
@@ -391,13 +261,13 @@ describe('sugiyamaService', function() {
       //                       =>
       // node3 ------- node4       node3 ------- node4
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
-      var node4 = sugiyama.createNode(4);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
+      var node4 = new Node(4);
 
-      sugiyama.connectNodes(node1, node2);
-      sugiyama.connectNodes(node3, node4);
+      node1.addNext(node2);
+      node3.addNext(node4);
 
       var grid = [ [node1, node3], [node2, node4] ];
 
@@ -416,18 +286,18 @@ describe('sugiyamaService', function() {
       //            \             /                          \             /
       //             \-- node7 --/                            \-- node5 --/
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
-      var node4 = sugiyama.createNode(4);
-      var node5 = sugiyama.createNode(5);
-      var node6 = sugiyama.createNode(6);
-      var node7 = sugiyama.createNode(7);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
+      var node4 = new Node(4);
+      var node5 = new Node(5);
+      var node6 = new Node(6);
+      var node7 = new Node(7);
 
-      sugiyama.connectNodes(node1, node7);
-      sugiyama.connectNodes(node4, node5);
-      sugiyama.connectNodes(node5, node6);
-      sugiyama.connectNodes(node7, node3);
+      node1.addNext(node7);
+      node4.addNext(node5);
+      node5.addNext(node6);
+      node7.addNext(node3);
 
       var grid = [ [node1, node4], [node2, node5, node7], [node3, node6] ];
 
@@ -447,17 +317,17 @@ describe('sugiyamaService', function() {
       //          X                     =>
       // node4 --/ \-- node5 --- node6      node4 --- node2 --- node3
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
-      var node4 = sugiyama.createNode(4);
-      var node5 = sugiyama.createNode(5);
-      var node6 = sugiyama.createNode(6);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
+      var node4 = new Node(4);
+      var node5 = new Node(5);
+      var node6 = new Node(6);
 
-      sugiyama.connectNodes(node1, node5);
-      sugiyama.connectNodes(node5, node6);
-      sugiyama.connectNodes(node4, node2);
-      sugiyama.connectNodes(node2, node3);
+      node1.addNext(node5);
+      node5.addNext(node6);
+      node4.addNext(node2);
+      node2.addNext(node3);
 
       var grid = [ [node1, node4], [node2, node5], [node3, node6] ];
 
@@ -482,17 +352,17 @@ describe('sugiyamaService', function() {
       //          X
       // node4 --/ \-- node5 --- node6
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
-      var node4 = sugiyama.createNode(4);
-      var node5 = sugiyama.createNode(5);
-      var node6 = sugiyama.createNode(6);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
+      var node4 = new Node(4);
+      var node5 = new Node(5);
+      var node6 = new Node(6);
 
-      sugiyama.connectNodes(node1, node5);
-      sugiyama.connectNodes(node4, node2);
-      sugiyama.connectNodes(node2, node3);
-      sugiyama.connectNodes(node5, node6);
+      node1.addNext(node5);
+      node4.addNext(node2);
+      node2.addNext(node3);
+      node5.addNext(node6);
 
       var grid = [ [node1, node4], [node2, node5], [node3, node6] ];
 
@@ -511,14 +381,14 @@ describe('sugiyamaService', function() {
       //                  /           =>                    /
       // node4 ----------/                node4 --- fake --/
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
-      var node4 = sugiyama.createNode(4);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
+      var node4 = new Node(4);
 
-      sugiyama.connectNodes(node1, node2);
-      sugiyama.connectNodes(node2, node3);
-      sugiyama.connectNodes(node4, node3);
+      node1.addNext(node2);
+      node2.addNext(node3);
+      node4.addNext(node3);
 
       var grid = [ [node1, node4], [node2], [node3] ];
 
@@ -536,15 +406,15 @@ describe('sugiyamaService', function() {
       //          /           /           =>           /            /
       // node4 --/-----------/                node4 --/---- fake --/
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
-      var node4 = sugiyama.createNode(4);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
+      var node4 = new Node(4);
 
-      sugiyama.connectNodes(node1, node2);
-      sugiyama.connectNodes(node2, node3);
-      sugiyama.connectNodes(node4, node2);
-      sugiyama.connectNodes(node4, node3);
+      node1.addNext(node2);
+      node2.addNext(node3);
+      node4.addNext(node2);
+      node4.addNext(node3);
 
       var grid = [ [node1, node4], [node2], [node3] ];
 
@@ -564,10 +434,10 @@ describe('sugiyamaService', function() {
       //
       // node1 --- (fake) --- (fake) --- (fake) --- node2
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
 
-      sugiyama.connectNodes(node1, node2);
+      node1.addNext(node2);
 
       var grid = [ [node1], [], [], [], [node2] ];
 
@@ -595,18 +465,18 @@ describe('sugiyamaService', function() {
       //          \              /
       // node2 ----\--> node3 --/
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
-      var node3 = sugiyama.createNode(3);
-      var node4 = sugiyama.createNode(4);
-      var node5 = sugiyama.createNode(5);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
+      var node4 = new Node(4);
+      var node5 = new Node(5);
 
-      sugiyama.connectNodes(node1, node3);
-      sugiyama.connectNodes(node1, node4);
-      sugiyama.connectNodes(node1, node5);
-      sugiyama.connectNodes(node2, node3);
-      sugiyama.connectNodes(node3, node4);
-      sugiyama.connectNodes(node4, node5);
+      node1.addNext(node3);
+      node1.addNext(node4);
+      node1.addNext(node5);
+      node2.addNext(node3);
+      node3.addNext(node4);
+      node4.addNext(node5);
 
       var grid = [[node1, node2], [node3], [node4], [node5]];
 
@@ -646,10 +516,10 @@ describe('sugiyamaService', function() {
       //
       // node1 --- (void) --- (void) --- (void) --- node2
 
-      var node1 = sugiyama.createNode(1);
-      var node2 = sugiyama.createNode(2);
+      var node1 = new Node(1);
+      var node2 = new Node(2);
 
-      sugiyama.connectNodes(node1, node2);
+      node1.addNext(node2);
 
       var grid = [ [node1], [], [], [], [node2] ];
 
