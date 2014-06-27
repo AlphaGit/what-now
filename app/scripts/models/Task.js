@@ -29,10 +29,9 @@
     Node.call(this);
     this.taskId = ++lastTaskId;
     this.isSuggested = false;
+    this.isSelected = false;
 
-    if (!parameters) {
-      throw 'Parameters are required for task initialization';
-    }
+    parameters = parameters || '';
 
     if (typeof parameters === 'string') {
       initializeFromName(parameters);
@@ -46,6 +45,16 @@
 
   Task.prototype.toString = function() {
     return '[Task#' + this.taskId + '] ' + this.name;
+  };
+
+  Task.prototype.clone = function() {
+    var cloned = Node.prototype.clone.call(this);
+    cloned.taskId = ++lastTaskId;
+    cloned.name = this.name;
+    cloned.isSuggested = this.isSuggested;
+    cloned.isComplete = this.isComplete;
+    cloned.isSelected = this.isSelected;
+    return cloned;
   };
 
   window.Task = Task;

@@ -46,4 +46,42 @@ describe('Task model', function() {
       expect(taskString.indexOf(task.name) > -1).toBe(true);
     });
   });
+
+  describe('#clone', function() {
+    it('should be defined', function () {
+      var task = new Task();
+      expect(task.clone).toBeDefined();
+    });
+
+    it('should return a copy of the current task', function() {
+      var previousTask = new Task('previous');
+      var nextTask = new Task('next');
+      var task = new Task('data');
+      task.addPrevious(previousTask);
+      task.addNext(nextTask);
+      task.isComplete = true;
+      task.isSelected = true;
+
+      var cloned = task.clone();
+
+      expect(cloned).not.toBe(task);
+      expect(cloned.data).toBe(task.data);
+      expect(cloned.name).toBe(task.name);
+      expect(cloned.isSuggested).toBe(task.isSuggested);
+      expect(cloned.isComplete).toBe(task.isComplete);
+      expect(cloned.isSelected).toBe(task.isSelected);
+
+      expect(cloned.next).not.toBe(task.next);
+      expect(cloned.next.length).toBe(task.next.length);
+      expect(cloned.next.every(function(next) {
+        return task.next.indexOf(next) > -1;
+      })).toBe(true);
+
+      expect(cloned.previous).not.toBe(task.previous);
+      expect(cloned.previous.length).toBe(task.previous.length);
+      expect(cloned.previous.every(function(previous) {
+        return task.previous.indexOf(previous) > -1;
+      })).toBe(true);
+    });
+  });
 });

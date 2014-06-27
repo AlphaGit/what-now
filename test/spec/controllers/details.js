@@ -7,7 +7,7 @@ describe('Controller: DetailsCtrl', function () {
 
   var ctrl, scope, rootScope;
   var taskListServiceMock = {
-    getFilteredTasks: function() { return []; },
+    getPossibleDependencies: function() { return []; },
     generateNewTask: function() { return { id: 0 }; },
     getTaskList: function() { return []; },
     addTask: function() {}
@@ -83,7 +83,7 @@ describe('Controller: DetailsCtrl', function () {
 
       it('should return a list of tasks', function() {
         var taskListMock = [{ id: 1, name: 'a' }, { id: 2, name: 'b' }];
-        spyOn(taskListServiceMock, 'getFilteredTasks').andReturn(taskListMock);
+        spyOn(taskListServiceMock, 'getPossibleDependencies').andReturn(taskListMock);
         var filteredTaskList;
 
         scope.$apply(function() {
@@ -96,28 +96,11 @@ describe('Controller: DetailsCtrl', function () {
       });
 
       it('should call the taskListService to filter the list of tasks', function() {
-        spyOn(taskListServiceMock, 'getFilteredTasks').andReturn([]);
+        spyOn(taskListServiceMock, 'getPossibleDependencies').andReturn([]);
+        var currentTask = new Task('test');
+        scope.taskBeingEdited = currentTask;
         scope.filteredTaskList('some filter');
-        expect(taskListServiceMock.getFilteredTasks).toHaveBeenCalledWith('some filter');
-      });
-
-      it('should not return the task being currently edited as an available dependency', function() {
-        var task1 = { id: 1, name: 'A1' };
-        var task2 = { id: 2, name: 'A2' };
-
-        scope.taskBeingEdited = task1;
-
-        spyOn(taskListServiceMock, 'getFilteredTasks').andReturn([task1, task2]);
-
-        var filteredTaskList;
-        scope.$apply(function() {
-          scope.filteredTaskList('A').then(function(taskList) {
-            filteredTaskList = taskList;
-          });
-        });
-
-        expect(filteredTaskList.length).toBe(1);
-        expect(filteredTaskList[0]).toBe(task2);
+        expect(taskListServiceMock.getPossibleDependencies).toHaveBeenCalledWith(currentTask, 'some filter');
       });
     }); // #filteredTaskList
   });

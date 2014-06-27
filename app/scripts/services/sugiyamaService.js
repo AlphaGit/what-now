@@ -4,6 +4,27 @@ angular.module('whatNowApp')
   .factory('sugiyamaService', [function () {
     var sugiyamaService = {};
 
+    var cloneGraph = function(graph) {
+      var cloneHash = {};
+      var cloned = graph.map(function (node) {
+        var clonedNode = node.clone();
+        cloneHash[node.nodeId] = clonedNode;
+        return clonedNode;
+      });
+
+      cloned.forEach(function (node) {
+        for (var i = node.next.length - 1; i >= 0; i--) {
+          node.next[i] = cloneHash[node.next[i].nodeId];
+        }
+
+        for (var j = node.previous.length - 1; j >= 0; j--) {
+          node.previous[j] = cloneHash[node.previous[j].nodeId];
+        }
+      });
+
+      return cloned;
+    };
+
     sugiyamaService.areAllPresent = function (listOfNodes, nodesToCheck) {
       var areAllPresent = true;
       var evaluatingIndex = nodesToCheck.length - 1;
@@ -172,7 +193,8 @@ angular.module('whatNowApp')
     };
 
     sugiyamaService.getDrawingStructure = function (nodeArray) {
-      var columns = sugiyamaService.arrangeInLayers(nodeArray);
+      var clonedNodeArray = cloneGraph(nodeArray);
+      var columns = sugiyamaService.arrangeInLayers(clonedNodeArray);
       sugiyamaService.addFakeNodes(columns);
       sugiyamaService.minimizeCrossings(columns);
 

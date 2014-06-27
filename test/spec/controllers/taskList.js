@@ -94,7 +94,7 @@ describe('Controller: TaskListCtrl', function () {
 
         var dependsOnText = scope.getDependsOnText(task3);
 
-        expect(dependsOnText).toBe([task1.taskId, task2.taskId].join(', '));
+        expect(dependsOnText).toBe([task1.name, task2.name].join(', '));
       });
     });
   });

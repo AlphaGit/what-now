@@ -31,7 +31,7 @@ angular.module('whatNowApp')
 
       $scope.getDependsOnText = function(task) {
         return task.previous.map(function(dependencyTask) {
-          return dependencyTask.taskId;
+          return dependencyTask.name;
         }).join(', ');
       };
     }

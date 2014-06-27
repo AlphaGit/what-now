@@ -50,10 +50,18 @@ angular.module('whatNowApp')
       $rootScope.$broadcast('taskSelected', taskToSelect);
     };
 
-    this.getFilteredTasks = function(filter) {
+    this.getPossibleDependencies = function(forTask, filter) {
       filter = filter.toLowerCase();
-      return taskList.filter(function(task) {
+      var nameMatchingTasks = taskList.filter(function(task) {
         return task.name.toLowerCase().indexOf(filter) === 0;
+      });
+
+      if (!(forTask instanceof Task)) {
+        return nameMatchingTasks;
+      }
+
+      return nameMatchingTasks.filter(function(task) {
+        return forTask.canAddAsPrevious(task);
       });
     };
 

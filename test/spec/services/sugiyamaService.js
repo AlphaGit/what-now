@@ -148,9 +148,9 @@ describe('sugiyamaService', function() {
 
       expect(diagram.length).toBe(2);
       expect(diagram[0].length).toBe(1);
-      expect(diagram[0][0]).toBe(node1);
+      expect(diagram[0][0].data).toBe(node1.data);
       expect(diagram[1].length).toBe(1);
-      expect(diagram[1][0]).toBe(node2);
+      expect(diagram[1][0].data).toBe(node2.data);
     });
 
     it('should reorganize several crossings in a single layer', function() {
@@ -186,6 +186,24 @@ describe('sugiyamaService', function() {
 
       expect(grid[2].length).toBe(1);
       expect(grid[2][0].data).toBe(c.data);
+    });
+
+    it('should not modify the relationships of the original nodes', function() {
+      var node1 = new Node('1');
+      var node2 = new Node('2');
+      var node3 = new Node('3');
+
+      node1.addNext(node2);
+      node1.addNext(node3);
+      node2.addNext(node3);
+
+      sugiyama.getDrawingStructure([node1, node2, node3]);
+
+      expect(node1.next.length).toBe(2);
+      expect(node1.next[0].data).toBe('2');
+      expect(node1.next[1].data).toBe('3');
+      expect(node2.next.length).toBe(1);
+      expect(node2.next[0].data).toBe('3');
     });
   }); // #getDrawingStructure
 

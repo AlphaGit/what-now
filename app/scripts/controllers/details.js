@@ -18,13 +18,7 @@ angular.module('whatNowApp')
       $scope.filteredTaskList = function(query) {
         var deferred = $q.defer();
 
-        var filteredTasks = TaskListService.getFilteredTasks(query);
-
-        // don't return current editing task as a valid dependency
-        var currentlyEditingIndex = filteredTasks.indexOf($scope.taskBeingEdited);
-        if (currentlyEditingIndex > -1) {
-          filteredTasks.splice(currentlyEditingIndex, 1);
-        }
+        var filteredTasks = TaskListService.getPossibleDependencies($scope.taskBeingEdited, query);
 
         deferred.resolve(filteredTasks);
 
