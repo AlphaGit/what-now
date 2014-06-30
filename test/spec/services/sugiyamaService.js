@@ -205,6 +205,22 @@ describe('sugiyamaService', function() {
       expect(node2.next.length).toBe(1);
       expect(node2.next[0].data).toBe('3');
     });
+
+    it('should include a reference to the original nodes of the graph', function() {
+      var node1 = new Node(1);
+      var node2 = new Node(2);
+      var node3 = new Node(3);
+
+      var grid = sugiyama.getDrawingStructure([node1, node2, node3]);
+
+      expect(grid[0][0]).not.toBe(node1);
+      expect(grid[0][1]).not.toBe(node2);
+      expect(grid[0][2]).not.toBe(node3);
+
+      expect(grid[0][2].originalNode).toBe(node1);
+      expect(grid[0][1].originalNode).toBe(node2);
+      expect(grid[0][0].originalNode).toBe(node3);
+    });
   }); // #getDrawingStructure
 
   describe('#insertFakeNodeBeforeNext', function() {

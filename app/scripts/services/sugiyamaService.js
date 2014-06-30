@@ -8,15 +8,18 @@ angular.module('whatNowApp')
       var cloneHash = {};
       var cloned = graph.map(function (node) {
         var clonedNode = node.clone();
+        clonedNode.originalNode = node;
         cloneHash[node.nodeId] = clonedNode;
         return clonedNode;
       });
 
       cloned.forEach(function (node) {
+        // duplicate next nodes for clones
         for (var i = node.next.length - 1; i >= 0; i--) {
           node.next[i] = cloneHash[node.next[i].nodeId];
         }
 
+        // duplicate previous nodes for clones
         for (var j = node.previous.length - 1; j >= 0; j--) {
           node.previous[j] = cloneHash[node.previous[j].nodeId];
         }

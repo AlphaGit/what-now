@@ -98,7 +98,7 @@ angular.module('whatNowApp')
         })
         .on('click', function(task) {
           scope.$apply(function() {
-            scope.onTaskClicked(task);
+            scope.onTaskClicked(task.originalNode);
           });
         });
 
@@ -139,7 +139,9 @@ angular.module('whatNowApp')
             name: task.name,
             nextCount: task.next.length,
             previousCount: task.previous.length,
-            isComplete: task.isComplete
+            isComplete: task.isComplete,
+            isSelected: task.isSelected,
+            isSuggested: task.isSuggested
           };
         });
       }, redraw, true);

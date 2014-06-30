@@ -4,5 +4,7 @@ angular.module('whatNowApp')
   .controller('ChartCtrl', ['$scope', 'taskListService',
     function ($scope, TaskListService) {
       $scope.tasks = TaskListService.getTaskList();
+
+      $scope.selectTask = TaskListService.selectTask;
     }
   ]);
