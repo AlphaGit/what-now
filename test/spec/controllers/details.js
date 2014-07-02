@@ -29,6 +29,10 @@ describe('Controller: DetailsCtrl', function () {
       expect(scope.taskBeingEdited).toBeDefined();
     });
 
+    it('should have a list of selected dependencies bound to the scope', function() {
+      expect(scope.selectedDependencies).toBeDefined();
+    });
+
     describe('#submitForm', function() {
       it('should be defined', function() {
         expect(scope.submitForm).toBeDefined();
@@ -103,5 +107,68 @@ describe('Controller: DetailsCtrl', function () {
         expect(taskListServiceMock.getPossibleDependencies).toHaveBeenCalledWith(currentTask, 'some filter');
       });
     }); // #filteredTaskList
+
+    describe('#addPrevious', function() {
+      it('should be defined', function() {
+        expect(scope.addPrevious).toBeDefined();
+      });
+
+      it('should call addPrevious is the task being edited is an actual task', function() {
+        var task = new Task('test');
+        var secondTask = new Task('second');
+
+        scope.taskBeingEdited = task;
+
+        spyOn(task, 'addPrevious');
+        scope.addPrevious(secondTask);
+
+        expect(task.addPrevious).toHaveBeenCalledWith(secondTask);
+      });
+
+      it('should do nothing if the task is a regular object', function() {
+        var task = { addPrevious: function() {} };
+        var secondTask = new Task('second');
+
+        scope.taskBeingEdited = task;
+
+        spyOn(task, 'addPrevious');
+        scope.addPrevious(secondTask);
+
+        expect(task.addPrevious).not.toHaveBeenCalled();
+      });
+    }); // #addPrevious
+
+    describe('#removePrevious', function() {
+      it('should be defined', function() {
+        expect(scope.removePrevious).toBeDefined();
+      });
+
+      it('should call removePrevious if the task being edited is an actual task', function() {
+        var task = new Task('test');
+        var secondTask = new Task('second');
+        task.addPrevious(secondTask);
+
+        scope.taskBeingEdited = task;
+
+        spyOn(task, 'removePrevious');
+
+        scope.removePrevious(secondTask);
+
+        expect(task.removePrevious).toHaveBeenCalledWith(secondTask);
+      });
+
+      it('should do nothing if the task is a regular object', function() {
+        var task = { removePrevious: function() {} };
+        var secondTask = new Task('second');
+
+        scope.taskBeingEdited = task;
+
+        spyOn(task, 'removePrevious');
+
+        scope.removePrevious(secondTask);
+
+        expect(task.removePrevious).not.toHaveBeenCalled();
+      });
+    }); // #removePrevious
   });
 });

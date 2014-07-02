@@ -28,7 +28,7 @@
       <label for="newTaskDependsOnText" class="col-sm-1 control-label">Depends on</label>
       <div class="col-sm-4">
         <tags-input
-          ng-model="taskBeingEdited.previous"
+          ng-model="selectedDependencies"
           display-property="name"
           placeholder="Type to select a new task"
           allow-leftover-text="false"
@@ -36,7 +36,9 @@
           add-on-blur="false"
           min-length="1"
           replace-spaces-with-dashes="false"
-          add-from-autocomplete-only="true">
+          add-from-autocomplete-only="true"
+          on-tag-added="addPrevious($tag)"
+          on-tag-removed="removePrevious($tag)">
           <auto-complete source="filteredTaskList($query)" min-length="1">
           </auto-complete>
         </tags-input>
