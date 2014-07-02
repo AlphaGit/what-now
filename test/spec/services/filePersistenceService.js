@@ -37,14 +37,14 @@ describe('filePersistenceService', function() {
       expect(service.saveToFile).toBeDefined();
     });
 
-    it('should stringify the object passed to it', function() {
+    it('should encode the contents to fit on a link', function() {
       var testObject = { something: 1 };
 
-      spyOn(windowMock.JSON, 'stringify');
+      spyOn(windowMock, 'encodeURIComponent');
 
       service.saveToFile(testObject, 'test.txt');
 
-      expect(windowMock.JSON.stringify).toHaveBeenCalledWith(testObject);
+      expect(windowMock.encodeURIComponent).toHaveBeenCalledWith(testObject);
     });
   }); // #saveToFile
 
@@ -73,15 +73,12 @@ describe('filePersistenceService', function() {
       var file = {};
 
       spyOn(windowMock, 'FileReader').andCallThrough();
-      spyOn(windowMock.JSON, 'parse').andCallThrough();
 
       service.readFromFile(file);
       fileReaderInstanceMock.result = fileContentsMock;
       fileReaderInstanceMock.triggerLoadEnd();
 
       expect(windowMock.FileReader).toHaveBeenCalled();
-      expect(windowMock.JSON.parse).toHaveBeenCalledWith(fileContentsMock);
-
     });
   }); // #readFromFile
 });

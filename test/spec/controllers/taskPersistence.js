@@ -23,13 +23,19 @@ describe('Controller: TaskPersistenceCtrl', function () {
     }
   };
 
+  var taskSerializationServiceMock = {
+    serializeTasks: function() {},
+    deserializeTasks: function() {}
+  };
+
   // Initialize the controller and a mock scope
   beforeEach(inject(function ($controller, $rootScope) {
     scope = $rootScope.$new();
     ctrl = $controller('TaskPersistenceCtrl', {
       $scope: scope,
       taskListService: taskListServiceMock,
-      filePersistenceService: filePersistenceServiceMock
+      filePersistenceService: filePersistenceServiceMock,
+      taskSerializationService: taskSerializationServiceMock
     });
   }));
 
@@ -55,12 +61,15 @@ describe('Controller: TaskPersistenceCtrl', function () {
 
       it('should call the filePersistenceService with the list of tasks to be saved', function() {
         var taskList = [{ id: 0 }, { id: 1 }];
+        var serializedTasks = '[{ id: 0 }, { id: 1 }]';
         taskListServiceMock.getTaskList = function() { return taskList; };
 
+        spyOn(taskSerializationServiceMock, 'serializeTasks').andReturn(serializedTasks);
         spyOn(filePersistenceServiceMock, 'saveToFile');
         ctrl.saveTasks();
 
-        expect(filePersistenceServiceMock.saveToFile).toHaveBeenCalledWith(taskList, 'taskList.txt');
+        expect(taskSerializationServiceMock.serializeTasks).toHaveBeenCalledWith(taskList);
+        expect(filePersistenceServiceMock.saveToFile).toHaveBeenCalledWith(serializedTasks, 'taskList.txt');
       });
     }); // #saveTasks
 
@@ -70,14 +79,16 @@ describe('Controller: TaskPersistenceCtrl', function () {
       });
 
       it('should call the filePersistenceService to load a file object', function() {
-        var mockTasks = [{ id: 0 }, { id: 1 }];
+        var mockTasksString = '[{ id: 0 }, { id: 1 }]';
+        var deserializedTasks = [{ id: 0 }, { id: 1 }];
         var fakePromise = {
           then: function(callback) {
-            callback(mockTasks);
+            callback(mockTasksString);
           }
         };
 
         spyOn(filePersistenceServiceMock, 'readFromFile').andReturn(fakePromise);
+        spyOn(taskSerializationServiceMock, 'deserializeTasks').andReturn(deserializedTasks);
         spyOn(taskListServiceMock, 'setTaskList');
 
         var file = { something: true };
@@ -85,7 +96,8 @@ describe('Controller: TaskPersistenceCtrl', function () {
         ctrl.loadTasks(file);
 
         expect(filePersistenceServiceMock.readFromFile).toHaveBeenCalledWith(file);
-        expect(taskListServiceMock.setTaskList).toHaveBeenCalledWith(mockTasks);
+        expect(taskSerializationServiceMock.deserializeTasks).toHaveBeenCalledWith(mockTasksString);
+        expect(taskListServiceMock.setTaskList).toHaveBeenCalledWith(deserializedTasks);
       });
 
       it('should avoid trying to load from the file if the file was not passed', function() {

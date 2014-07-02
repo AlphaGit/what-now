@@ -1,13 +1,14 @@
 'use strict';
 
 angular.module('whatNowApp')
-  .controller('TaskPersistenceCtrl', ['$scope', 'taskListService', 'filePersistenceService',
-    function ($scope, TaskListService, FilePersistenceService) {
+  .controller('TaskPersistenceCtrl', ['$scope', 'taskListService', 'taskSerializationService', 'filePersistenceService',
+    function ($scope, TaskListService, TaskSerializationService, FilePersistenceService) {
       var ctrl = this;
 
       ctrl.saveTasks = function() {
         var taskList = TaskListService.getTaskList();
-        FilePersistenceService.saveToFile(taskList, 'taskList.txt');
+        var taskString = TaskSerializationService.serializeTasks(taskList);
+        FilePersistenceService.saveToFile(taskString, 'taskList.txt');
       };
 
       ctrl.loadTasks = function(file) {
@@ -15,7 +16,8 @@ angular.module('whatNowApp')
           return;
         }
 
-        FilePersistenceService.readFromFile(file).then(function(tasks) {
+        FilePersistenceService.readFromFile(file).then(function(taskString) {
+          var tasks = TaskSerializationService.deserializeTasks(taskString);
           TaskListService.setTaskList(tasks);
         });
       };

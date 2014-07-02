@@ -8,6 +8,7 @@ angular.module('whatNowApp')
       $scope.selectedDependencies = [];
 
       $scope.submitForm = function() {
+        $scope.taskBeingEdited.previous = $scope.selectedDependencies;
         TaskListService.addTask($scope.taskBeingEdited);
         $scope.taskBeingEdited = {};
         $scope.selectedDependencies = [];
