@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/AlphaGit/what-now.png?label=ready&title=Ready)](https://waffle.io/AlphaGit/what-now)
 # what-now [![Build Status](https://travis-ci.org/AlphaGit/what-now.png)](https://travis-ci.org/AlphaGit/what-now)
 
 To-do list with a twist.
